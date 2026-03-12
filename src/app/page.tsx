@@ -41,7 +41,7 @@ export default async function Home() {
 
   const { data: heroPropertiesForMedia } = await supabase
     .from("properties")
-    .select("id, title, location")
+    .select("id, title, location, slug")
 
   let properties = heroProperties || []
   if (properties.length === 0) {
@@ -69,10 +69,15 @@ export default async function Home() {
   )
   const heroItems = (heroMedia || [])
     .filter((item: any) => item.url)
-    .map((item: any) => ({
-      imageUrl: item.url,
-      label: propertyLabelById.get(item.property_id) || item.alt_text || null,
-    }))
+    .map((item: any) => {
+      const property = (heroPropertiesForMedia || []).find((p: any) => p.id === item.property_id)
+      return {
+        imageUrl: item.url,
+        label: propertyLabelById.get(item.property_id) || item.alt_text || null,
+        propertyId: item.property_id,
+        slug: (property as any)?.slug,
+      }
+    })
     .slice(0, 8)
 
   return (
@@ -328,23 +333,31 @@ export default async function Home() {
                 title: "Neighborhood-Level Insight",
                 description:
                   "We help you compare communities, commute patterns, schools, and property values so your choice fits your daily life.",
+                image: "https://images.unsplash.com/photo-1448630360428-65456885c650?q=80&w=1600&auto=format&fit=crop",
               },
               {
                 title: "Data-Driven Pricing Strategy",
                 description:
                   "Whether buying or selling, we use live market trends and comps to support smart pricing and stronger outcomes.",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop",
               },
               {
                 title: "Hands-On Transaction Support",
                 description:
                   "From inspections and negotiations to financing and closing, we stay proactive so there are no surprises.",
+                image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1600&auto=format&fit=crop",
               },
             ].map((item) => (
               <StaggerItem key={item.title}>
-                <Card className="h-full">
-                  <CardContent className="p-6">
-                    <h3 className="font-serif text-xl font-semibold">{item.title}</h3>
-                    <p className="mt-3 text-sm text-muted-foreground">{item.description}</p>
+                <Card className="relative h-full overflow-hidden">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center opacity-60"
+                    style={{ backgroundImage: `url(${item.image})` }}
+                  />
+                  <div className="absolute inset-0 bg-black/50" />
+                  <CardContent className="relative p-6">
+                    <h3 className="font-serif text-xl font-semibold text-white">{item.title}</h3>
+                    <p className="mt-3 text-sm text-white">{item.description}</p>
                   </CardContent>
                 </Card>
               </StaggerItem>
@@ -385,14 +398,43 @@ export default async function Home() {
                 investor outreach, and professional presentation to attract qualified buyers.
               </p>
             </ScrollAnimation>
-            <ScrollAnimation className="flex flex-col gap-4 sm:flex-row sm:items-center lg:justify-end">
-              <ColorHoverButton href="/sell-your-property" size="lg" className="gap-2">
-                Get Started
-                <ArrowRight className="h-4 w-4" />
-              </ColorHoverButton>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/contact">Talk to an Advisor</Link>
-              </Button>
+            <ScrollAnimation className="lg:justify-end">
+              <Card className="relative w-full overflow-hidden border-0 p-0 shadow-xl lg:ml-auto lg:max-w-md">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{
+                    backgroundImage: "url(/rg-group.jpg)",
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/45" />
+                <CardContent className="relative flex min-h-[280px] flex-col justify-start gap-4 p-6">
+                  <p className="text-center text-sm font-medium uppercase tracking-widest text-white/80">
+                    RG Property Advisors Team
+                  </p>
+                  <div className="flex-grow" />
+                  <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="lg"
+                      className="border-white/70 bg-transparent text-white hover:border-red-600 hover:bg-red-600 hover:text-white"
+                    >
+                      <Link href="/sell-your-property" className="inline-flex items-center gap-2">
+                        Get Started
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="lg"
+                      className="border-white/70 bg-transparent text-white hover:border-red-600 hover:bg-red-600 hover:text-white"
+                    >
+                      <Link href="/contact">Talk to an Advisor</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </ScrollAnimation>
           </div>
         </div>
