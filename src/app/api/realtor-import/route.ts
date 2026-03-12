@@ -227,7 +227,7 @@ async function scrapeNextData(html: string, url: string) {
 // Supabase upsert
 // ---------------------------------------------------------------------------
 
-async function importToSupabase(listing: ReturnType<typeof scrapeNextData>) {
+async function importToSupabase(listing: Awaited<ReturnType<typeof scrapeNextData>>) {
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
   const slug = slugify(`${listing.address}-${listing.city}`)

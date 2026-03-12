@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 // Rate limiting: IP -> timestamps
 const rateLimitMap = new Map<string, number[]>()
 const RATE_LIMIT_WINDOW = 5 * 60 * 1000 // 5 minutes
@@ -85,6 +83,7 @@ export async function POST(request: NextRequest) {
 
     // Send email notification
     try {
+      const resend = new Resend(process.env.RESEND_API_KEY)
       await resend.emails.send({
         from: "RG Property Advisors <info@rgpropertyadvisors.com>",
         to: ["info@rgpropertyadvisors.com"],

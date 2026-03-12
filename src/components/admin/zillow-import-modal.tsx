@@ -185,7 +185,7 @@ export function RealtorImportModal({ onImportComplete }: { onImportComplete?: ()
               <Button onClick={() => handleClose(true)}>Done</Button>
             ) : (
               <>
-                <Button variant="outline" onClick={handleClose} disabled={loading}>
+                <Button variant="outline" onClick={() => handleClose(false)} disabled={loading}>
                   Cancel
                 </Button>
                 <Button onClick={handleImport} disabled={loading} className="gap-2">
